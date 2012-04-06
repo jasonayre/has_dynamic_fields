@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "acts_as_dynamic"
   gem.homepage = "http://github.com/jasonayre/acts_as_dynamic"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = "Lets your models act dynamically in a clean EAV style"
+  gem.description = "Lets your models act dynamic in a clean EAV style"
   gem.email = "jasonayre@gmail.com"
   gem.authors = ["Jason Ayre"]
   # dependencies defined in Gemfile
@@ -32,13 +32,13 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-require 'rcov/rcovtask'
-Rcov::RcovTask.new do |test|
-  test.libs << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
-  test.rcov_opts << '--exclude "gems/*"'
-end
+# require 'simplecov/simplecovtask'
+# Simplecov::SimplecovTask.new do |test|
+#   test.libs << 'test'
+#   test.pattern = 'test/**/test_*.rb'
+#   test.verbose = true
+#   test.simplecov_opts << '--exclude "gems/*"'
+# end
 
 task :default => :test
 
