@@ -1,4 +1,3 @@
-require "carrierwave"
 require "active_record"
 module ActsAsDynamic
 
