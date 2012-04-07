@@ -1,6 +1,27 @@
 = acts_as_dynamic
 
-Description goes here.
+Turns your models into dynamic models, in a non traditional EAV style.
+
+Normal EAV would have a values table, that looks like:
+
+id entity_id attribute_id value_id
+
+Acts as dynamics value table looks like this
+
+id entity_id field_1 field_2 field_3 field_4 field_5
+
+With a fields table that looks like
+
+id name label bunchofoptions
+
+The ID of this field, corresponds to column in value table, for that particular lookup. So its more of a matrix style EAV.
+Field columns are dynamically added to Fields table as they are created. (not yet)
+
+---
+
+Examples and scaffold generator coming soon.
+
+
 
 == Contributing to acts_as_dynamic
  
