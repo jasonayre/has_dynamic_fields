@@ -19,6 +19,7 @@ module ActsAsDynamic
       options[:field_class_name] ||= "DynamicField"
       options[:field_table_name] ||= options[:field_class_name].tableize
       options[:field_foreign_key] ||= options[:field_class_name].tableize.singularize.to_sym
+      options[:field_singular] ||= options[:field_class_name].tableize.singularize      
       options[:field_plural] ||= options[:field_class_name].tableize
       
       options[:fieldgroup_class_name] ||= "DynamicFieldGroup"
@@ -27,11 +28,19 @@ module ActsAsDynamic
       options[:fieldgroup_singular] ||= options[:fieldgroup_class_name].tableize.singularize
       options[:fieldgroup_plural] ||= options[:fieldgroup_class_name].tableize
       
+      options[:fieldoptions_class_name] ||= "DynamicFieldOptions"
+      options[:fieldoptions_table_name] ||= options[:fieldoptions_class_name].tableize
+      options[:fieldoptions_foreign_key] ||= "#{options[:fieldoptions_class_name].tableize.singularize}_id".to_sym
+      options[:fieldoptions_singular] ||= options[:fieldoptions_class_name].tableize.singularize
+      options[:fieldoptions_plural] ||= options[:fieldoptions_class_name].tableize      
+      
       options[:entity_klass] = options[:entity_class_name].constantize
       options[:field_klass] = options[:field_class_name].constantize
       options[:value_klass] = options[:value_class_name].constantize
       options[:fieldgroup_klass] = options[:fieldgroup_class_name].constantize
+      options[:fieldoptions_klass] = options[:fieldoptions_class_name].constantize
       
+            
       cattr_accessor :aad_options
       self.aad_options ||= Hash.new
 
@@ -45,7 +54,8 @@ module ActsAsDynamic
       entity_klass = options[:entity_class_name].constantize
       field_klass = options[:field_class_name].constantize
       value_klass = options[:value_class_name].constantize
-      fieldgroup_class = options[:fieldgroup_class_name].constantize
+      fieldgroup_klass = options[:fieldgroup_class_name].constantize
+      fieldoptions_klass = options[:fieldoptions_class_name].constantize
       
       #eval entity class
       class_eval do
@@ -89,6 +99,8 @@ module ActsAsDynamic
         before_create :format_name
         after_create :dynamic_field_add_column_migration
         before_destroy :dynamic_field_remove_column_migration
+
+        has_many options[:fieldoptions_plural].to_sym
         
         belongs_to options[:fieldgroup_singular].to_sym
         
@@ -96,11 +108,18 @@ module ActsAsDynamic
         self.aad_options = options
         
         def dynamic_field_add_column_migration
+          
+          except ||= %w{created_at updated_at}
+          except_column_types = [:decimal, :date, :datetime]
+          except << self.class.name.constantize.columns.collect {|k| k.name if except_column_types.include?(k.type) }.reject { |val| val == nil }
+
+          except.flatten!
+          
           `rails g dynamic_field_migration add_field_#{self.id}_to_#{self.aad_options[:value_table_name]} field_#{self.id}:string`
           `rake db:migrate_dynamic_fields`
           SeedFu::Writer.write("db/fixtures/#{self.aad_options[:field_table_name]}.rb", :class_name => self.aad_options[:field_table_name], :constraints => [:name, self.aad_options[:fieldgroup_foreign_key]]) do |writer|
             self.class.name.constantize.all.each do |f|
-              @attrs = f.attributes.delete(:id)
+              @attrs = f.attributes.reject { |k,v| except.include?(k) }
               writer.add(@attrs)
             end
           end
@@ -108,11 +127,18 @@ module ActsAsDynamic
         end
         
         def dynamic_field_remove_column_migration
+          
+          except ||= %w{created_at updated_at}
+          except_column_types = [:decimal, :date, :datetime]
+          except << self.class.name.constantize.columns.collect {|k| k.name if except_column_types.include?(k.type) }.reject { |val| val == nil }
+
+          except.flatten!
+          
           `rails g dynamic_field_migration remove_field_#{self.id}_from_#{self.aad_options[:value_table_name]} field_#{self.id}`
           `rake db:migrate_dynamic_fields`
           SeedFu::Writer.write("db/fixtures/#{self.aad_options[:field_table_name]}.rb", :class_name => self.aad_options[:field_table_name], :constraints => [:name, self.aad_options[:fieldgroup_foreign_key]]) do |writer|
             self.class.name.constantize.all.each do |f|
-              @attrs = f.attributes.delete(:id)
+              @attrs = f.attributes.reject { |k,v| except.include?(k) }
               writer.add(@attrs)
             end
           end
@@ -122,6 +148,46 @@ module ActsAsDynamic
           self.name = self.name.split(" ").join("_").downcase
         end
         
+        def write_seed_data
+          SeedFu::Writer.write("db/fixtures/#{self.aad_options[:field_table_name]}.rb", :class_name => self.aad_options[:field_table_name], :constraints => [:name, self.aad_options[:fieldgroup_foreign_key]]) do |writer|
+            self.class.name.constantize.all.each do |f|
+              @attrs = f.attributes.reject { |k,v| except.include?(k) }
+              writer.add(@attrs)
+            end
+          end
+        end
+        
+      end
+      
+      
+      fieldoptions_klass.class_eval do
+        
+        belongs_to options[:field_singular].to_sym
+        after_update :write_seed_data
+        
+        if self.respond_to? :mount_uploader
+          mount_uploader :image, "#{options[:fieldoptions_class_name]}Uploader".constantize
+        end
+        
+        cattr_accessor :aad_options
+        self.aad_options = options
+        
+        def write_seed_data
+          
+          except ||= %w{created_at updated_at}
+          except_column_types = [:decimal, :date, :datetime]
+          except << self.class.name.constantize.columns.collect {|k| k.name if except_column_types.include?(k.type) }.reject { |val| val == nil }
+
+          except.flatten!
+          
+          SeedFu::Writer.write("db/fixtures/#{self.aad_options[:fieldoptions_table_name]}.rb", :class_name => self.aad_options[:fieldoptions_table_name], :constraints => [:value, self.aad_options[:field_foreign_key]]) do |writer|
+            self.class.name.constantize.all.each do |f|
+                            @attrs = f.attributes.reject { |k,v| except.include?(k) }
+              writer.add(@attrs)
+            end
+          end          
+        end  
+          
       end
       
 

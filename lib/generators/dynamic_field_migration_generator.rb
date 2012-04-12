@@ -9,9 +9,15 @@ class DynamicFieldMigrationGenerator < Rails::Generators::Base
   source_root File.expand_path('../templates', __FILE__)
 
   def generate_migration
+    destination = "db/migrate/dynamic_fields/#{next_migration_number}_#{file_name}.rb"
+    @migration_file_name  = File.basename(destination).sub(\.rb$/, '')
+    @migration_class_name = @migration_file_name.camelize
+
+    puts destination.inspect
+    puts @migration_file_name
+    puts @migration_class_name  
+    template "#{migration_type}_field_migration.rb", destination unless self.class.migration_exists?("db/migrate/dynamic_fields/", @migration_file_name)
     
-    template "#{migration_type}_field_migration.rb", "db/migrate/dynamic_fields/#{next_migration_number}_#{file_name}.rb"
-    puts "HI I AM WORKING"
     # puts args.inspect
     # ActiveRecord::Migration.next_migration_number(self.next_migration_number)
   end
