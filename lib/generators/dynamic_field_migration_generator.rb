@@ -10,16 +10,15 @@ class DynamicFieldMigrationGenerator < Rails::Generators::Base
 
   def generate_migration
     destination = "db/migrate/dynamic_fields/#{next_migration_number}_#{file_name}.rb"
-    @migration_file_name  = File.basename(destination).sub(\.rb$/, '')
+    
+    @migration_file_name  = File.basename(destination).sub(".rb", "").split("_").slice(1..100).join('_')
+
     @migration_class_name = @migration_file_name.camelize
 
-    puts destination.inspect
-    puts @migration_file_name
-    puts @migration_class_name  
+    migration_already_exists = self.class.migration_exists?("db/migrate/dynamic_fields/", @migration_file_name)
     template "#{migration_type}_field_migration.rb", destination unless self.class.migration_exists?("db/migrate/dynamic_fields/", @migration_file_name)
-    
-    # puts args.inspect
-    # ActiveRecord::Migration.next_migration_number(self.next_migration_number)
+    `rake db:migrate_dynamic_fields` unless migration_already_exists
+
   end
   
   private
