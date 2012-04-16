@@ -1,4 +1,4 @@
-= acts_as_dynamic
+= has_dynamic_fields
 
 Turns your models into dynamic models, in a non traditional EAV style.
 

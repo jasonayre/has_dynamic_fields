@@ -14,8 +14,8 @@ require 'rake'
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "acts_as_dynamic"
-  gem.homepage = "http://github.com/jasonayre/acts_as_dynamic"
+  gem.name = "has_dynamic_fields"
+  gem.homepage = "http://github.com/jasonayre/has_dynamic_fields"
   gem.license = "MIT"
   gem.summary = "Lets your models act dynamically in a clean EAV style"
   gem.description = "Lets your models act dynamic in a clean EAV style"
