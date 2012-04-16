@@ -32,6 +32,20 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
+require 'rspec/core'
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.pattern = FileList['spec/**/*_spec.rb']
+  spec.rspec_opts = ["--color"]
+end
+
+RSpec::Core::RakeTask.new(:rcov) do |spec|
+  spec.pattern = 'spec/**/*_spec.rb'
+  spec.rcov = true
+end
+
+task :default => :spec
+
 # require 'simplecov/simplecovtask'
 # Simplecov::SimplecovTask.new do |test|
 #   test.libs << 'test'
@@ -40,7 +54,7 @@ end
 #   test.simplecov_opts << '--exclude "gems/*"'
 # end
 
-task :default => :test
+# task :default => :test
 
 require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|

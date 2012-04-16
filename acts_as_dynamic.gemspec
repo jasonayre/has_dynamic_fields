@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jason Ayre"]
-  s.date = "2012-04-06"
+  s.date = "2012-04-15"
   s.description = "Lets your models act dynamic in a clean EAV style"
   s.email = "jasonayre@gmail.com"
   s.extra_rdoc_files = [
@@ -27,7 +27,13 @@ Gem::Specification.new do |s|
     "acts_as_dynamic.gemspec",
     "lib/acts_as_dynamic.rb",
     "lib/acts_as_dynamic/base.rb",
+    "lib/acts_as_dynamic/has_dynamic_fields.rb",
     "lib/acts_as_dynamic/railtie.rb",
+    "lib/generators/dynamic_field_migration_generator.rb",
+    "lib/generators/dynamic_field_scaffold_generator.rb",
+    "lib/generators/templates/add_field_migration.rb",
+    "lib/generators/templates/remove_field_migration.rb",
+    "lib/tasks/dynamic_field_migrate.rake",
     "test/helper.rb",
     "test/test_acts_as_dynamic.rb"
   ]
@@ -41,12 +47,16 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<seed-fu>, [">= 0"])
+      s.add_development_dependency(%q<rspec>, ["~> 2.8.0"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
       s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.8.3"])
       s.add_development_dependency(%q<simplecov>, [">= 0"])
     else
+      s.add_dependency(%q<seed-fu>, [">= 0"])
+      s.add_dependency(%q<rspec>, ["~> 2.8.0"])
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<rdoc>, ["~> 3.12"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
@@ -54,6 +64,8 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<simplecov>, [">= 0"])
     end
   else
+    s.add_dependency(%q<seed-fu>, [">= 0"])
+    s.add_dependency(%q<rspec>, ["~> 2.8.0"])
     s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<rdoc>, ["~> 3.12"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])

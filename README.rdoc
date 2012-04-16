@@ -19,7 +19,30 @@ Field columns are dynamically added to Fields table as they are created. (not ye
 
 ---
 
-Examples and scaffold generator coming soon.
+## Scaffold Generator
+
+The options are fairly verbose, I apologize in advance, I wanted to give the maximum amount of flexibility when working with this gem.
+
+#### Examples
+
+rails g dynamic_field_scaffold post use_fieldgroup_table:true create_fieldgroup_table:true fieldgroup_table_name:post_categories
+
+Where "post" above, is the name of the entity you are creating the fields for. It should be an existing model in your app, this is the only model the generator won't create.
+
+The command above should generate output similar to these files:
+
+create  db/migrate/20120416191442_create_post_fields.rb
+create  db/migrate/20120416191443_create_post_field_values.rb
+create  db/migrate/20120416191444_create_post_field_options.rb
+create  db/migrate/20120416191445_create_post_categories.rb
+create  app/models/post_field.rb
+create  app/models/post_field_value.rb
+create  app/models/post_field_option.rb
+create  app/models/post_category.rb
+
+Post category here is acting as the fieldgroup, scoping the available fields for a given post, by category.
+This allows you to have different sets of fields for different categories of entities.
+In order to utilize this behavior, you obviously need to first have a user choose a post category, when creating a post, so that they are then able to see the scoped fields.
 
 
 

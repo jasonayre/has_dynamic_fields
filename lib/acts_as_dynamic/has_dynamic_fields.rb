@@ -67,6 +67,7 @@ module ActsAsDynamic
 
         has_one options[:value_singular].to_sym
         accepts_nested_attributes_for options[:value_singular].to_sym, :allow_destroy => true
+        belongs_to options[:fieldgroup_singular].to_sym
 
         #because field relationships are not automatically saved, we need to set flag then do it explicitly
         before_update :update_dynamic_fields, :if => :update_dynamic_fields?
@@ -190,6 +191,12 @@ module ActsAsDynamic
         end  
 
       end
+      
+      # todo: make fieldgroup optional
+      fieldgroup_klass.class_eval do
+        has_many options[:field_table_name].to_sym
+        has_many options[:value_table_name].to_sym, :through => options[:field_table_name].to_sym, :source => options[:entity_singular].to_sym
+      end
 
     end
 
@@ -271,7 +278,7 @@ module ActsAsDynamic
               self.send(self.aad_options[:value_singular]).send("field_#{field.id}".to_sym, *args)
             end
           end
-          #former only set the methods no we actually have to execute them
+          #former only set the methods now we actually have to execute them
           send(name, *args)
 
         else
