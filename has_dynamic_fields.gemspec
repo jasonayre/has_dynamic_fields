@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "has_dynamic_fields"
-  s.version = "0.0.1"
+  s.version = "0.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jason Ayre"]
@@ -24,6 +24,9 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
+    "has_dynamic_fields-0.0.1.gem",
+    "has_dynamic_fields-0.0.2.gem",
+    "has_dynamic_fields.gemspec",
     "lib/generators/dynamic_field_migration_generator.rb",
     "lib/generators/dynamic_field_scaffold_generator.rb",
     "lib/generators/templates/add_field_migration.rb",
@@ -36,14 +39,19 @@ Gem::Specification.new do |s|
     "lib/generators/templates/fieldvalues_model_template.rb",
     "lib/generators/templates/fieldvalues_table_migration.rb",
     "lib/generators/templates/remove_field_migration.rb",
+    "lib/has_dynamic_fields.rb",
+    "lib/has_dynamic_fields/base.rb",
+    "lib/has_dynamic_fields/has_dynamic_fields.rb",
+    "lib/has_dynamic_fields/railtie.rb",
     "lib/tasks/dynamic_field_migrate.rake",
     "spec/spec_helper.rb",
-    "test/helper.rb"
+    "test/helper.rb",
+    "test/test_has_dynamic_fields.rb"
   ]
   s.homepage = "http://github.com/jasonayre/has_dynamic_fields"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.10"
+  s.rubygems_version = "1.8.22"
   s.summary = "Lets your models act dynamically in a clean EAV style"
 
   if s.respond_to? :specification_version then
